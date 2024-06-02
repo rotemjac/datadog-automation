@@ -1,0 +1,9 @@
+export TENANT_ID=
+export TEAM=cwp-runtime
+export ENVIRONMENT=staging
+export ACTION=create
+
+export LOG_LEVEL=DEBUG
+
+export API_KEY= ""
+export APP_KEY= ""

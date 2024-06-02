@@ -1,0 +1,146 @@
+Kind: Job
+FullNameOverride: "synthetic-tests-service"
+Containers:
+  - Name: "synthetic-tests-service"
+    Image:
+      Registry: 889956758113.dkr.ecr.us-west-2.amazonaws.com/tools/
+      Name: "datadog-automation"
+      Version: "latest"
+      PullPolicy: "Always"
+    Env:
+      - name: "CONFIG_FILE_PATH"
+        value: "/etc/config"
+      - name: "CONFIG_FILE_NAME"
+        value: "config.yaml"
+
+      - name: "TENANT_ID"
+        value: "1234567890"
+
+      - name: "ENVIRONMENT"
+        value: "staging"
+
+      - name: "TEAM"
+        value: "cwp-runtime"
+
+      - name: SYN_TEST_TYPE
+        value: "tenant"
+
+      - name: "DEBUG_SLEEP"
+        value: "true"
+
+      - name: "LOG_LEVEL"
+        value: "DEBUG"
+
+      - name: "API_KEY"
+        value: ""
+
+      - name: "APP_KEY"
+        value: ""
+
+      - name: "JWT_TOKEN"
+        value: "SYN_TEST_STAGING_ACCESS_TOKEN"
+
+      - name: "BE_BASE_URL"
+        value: ""
+
+      - name: "REGION"
+        value: "us-east-2"
+
+
+        
+    MountVolumes:
+      - mountPath: /etc/config
+        name: tests-volume
+
+Volumes:
+  - name: tests-volume
+    configMap:
+      name: tests-config
+
+Job:
+  Spec:
+    suspend: false
+    parallelism: 1
+    completions: 1
+    backoffLimit: 1
+    completionMode: "Indexed" #/ "Indexed"
+    activeDeadlineSeconds: 1000000
+    ttlSecondsAfterFinished: 300000
+  RestartPolicy: Never
+
+
+ArrayConfigMap:
+  Enabled: true
+  Name: tests-config
+  Data:
+    HttpTests:
+      - Name: ""
+        Region: "us-east-2"
+        Timeout: 60
+        Url: ""
+        Method: "GET"
+        TenantId: "6c7ad38875"
+        Environment: "dev"
+        JwtToken:	"SYN_TEST_DEV_ACCESS_TOKEN"
+        Team: "cwp-runtime"
+
+    GrpcTests:
+      - Name: ""
+        Region: "us-east-2"
+        Timeout: 60
+        Url: ""
+        Method: "Check"
+        TenantId: ""
+        Environment: "staging"
+        Host: ""
+        Port: 443
+        ServiceToCheck: "healtheng.Health"
+        JwtToken: "SYN_TEST_STAGING_ACCESS_TOKEN"
+        Team: "cwp-runtime"
+        Message: "{\n    \"service\": \"KafkaBridge\"\n}"
+        CompressedJsonDescriptor: "eJytkc1uwyAQhN9lz8jqz6GSr1HUVpWIFKfN0UJkY9Ngm8LiKor87gVjuU6VYzkty/DNLFygRUd4gPwCNQpNNbZV3HSGVNe6WH6KXpRGyJOoEHKQXZPZp0w6k8lvkzmU3io6A0vCxmtSRmN5VBrDfbIeB7aweRltVjXK0xa/fOjH7lGhPox2Dm2vJMaSziY6OrIqpGKgAuB+GALuCuJMSIp/KCTIuwWkiNi2KlJ/Zi2TXUtCoxfa41i98ze+2XPI7xgU6+3HK38O1xnwza6c9w/T2WpdzvrHYZE3khqkuksZx/ixsOkddinpjQdiQZKmvKWZ5g82e0Gy/j/ir6ggi6KZfjOtHzMAx/A="
+
+      - Name: ""
+        Region: "us-east-2"
+        Timeout: 60
+        Url: ""
+        Method: "Check"
+        TenantId: ""
+        Environment: "staging"
+        Host: ""
+        Port: 443
+        ServiceToCheck: "reputation.Health"
+        JwtToken: "SYN_TEST_STAGING_ACCESS_TOKEN"
+        Team: "cwp-runtime"
+        Message: "{\n    \"service\": \"Reputation\"\n}"
+        CompressedJsonDescriptor: "eJytkMsKwjAQRf9l1ln42HUrRUWIYH0sJdTRBmtak2lBJP/uxEit4tJsMnNzc3IzdzDoCA+Q3MFi3ZAiXZnQvfUZqpKKSYH5eYXXhvWgHjWWBxcqh7bVOYaSbjXv4MhqcwIBmgFD7734hLi6Mg6/KPx043qQLGDNKYt6xxK9ZJ8WFlpVcr5QbeRCLncSkoGALF1t53LK1wXI5Xrf9aPX2STdd/6x7+UNpAtSUcWMz/hxVM85rGPSHwMSbIm//OV5/Z+f2SnKi/8R36aMLKoLJGQb9HE9AN2+q10="
+
+      - Name: ""
+        Region: "us-east-2"
+        Timeout: 60
+        Url: ""
+        Method: "Check"
+        TenantId: ""
+        Environment: "staging"
+        Host: ""
+        Port: 443
+        ServiceToCheck: "configuration.Health"
+        JwtToken: "SYN_TEST_STAGING_ACCESS_TOKEN"
+        Team: "cwp-runtime"
+        Message: "{\n    \"service\": \"Configuration\"\n}"
+        CompressedJsonDescriptor: "eJytUctuwyAQ/BfOltXHoZKvUdRWlYgU53G0EFnbNNimsLiKIv97F2O5TpVjOQ3DMDMLV9aCQzix7Mpk15aq8lag6tpAdCYgF+Cn6EVhhDyLClhG0ia1L6l0JpXfJnUgvVV4YUkUNl6jMhqKUmmg+2g9DMki6g2ExnpVgzxv4csTH9hSgT6NcQ5sryQEiBcTEh1a1VYUoMjgcRjI7sbEGWoKf1xQoHcLkzzYtlUe+dlr2exWQkQvtIcR7fkH3xw5yx4Slq+3h3f+StcTxje7Yt4/TWerdTHrn4dF3+DUANZd7DjWD8DGd9jFpnceKCFJnPKeZpqfYo4CZf1/jr+iHC2IZvrNuH4AKvTJuA=="
+
+
+
+
+
+
+Security:
+  ServiceAccount:
+    Create: false
+    Name: "" # If empty - value FullNameOverride will be added
+    Annotations:
+      eks.amazonaws.com/role-arn: "arn:aws:iam::?:role/temp-topics-service-role"
+
+
+
